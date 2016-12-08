@@ -5,10 +5,37 @@
  */
 package ksk;
 
+import java.io.Serializable;
+import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 /**
  *
  * @author saara
  */
-public class Kaavatilasto {
+@Entity
+@Table(name = "Formdata")
+public class Kaavatilasto implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+
+    @Column(name = "id")
+    private int id;
     
+    @Column(name = "id")
+    private String kaavanimi;
+
+    // timestamp muutokselle
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "date")
+    private Date date;
+
 }

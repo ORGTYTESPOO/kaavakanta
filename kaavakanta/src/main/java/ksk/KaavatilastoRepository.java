@@ -9,6 +9,8 @@ package ksk;
  *
  * @author saara
  */
-public interface KaavatilastoRepository {
+import org.springframework.data.repository.CrudRepository;
+ 
+public interface KaavatilastoRepository  extends CrudRepository<Kaavatilasto, Long> {
     
 }

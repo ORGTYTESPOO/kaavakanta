@@ -9,9 +9,6 @@ package ksk;
  *
  * @author saara
  */
-
-import org.springframework.data.repository.CrudRepository;
- 
-public interface KoodistoRepository  extends CrudRepository<Koodisto, Long> {
+public class Historia {
     
 }
