@@ -31,11 +31,11 @@ public class KaavaController {
         String testi = "hei maailma";
         //suunnittelualue
 
-//        for (Koodisto koodistodata : koodistoRepository.findAll()) {
-//            System.out.println("k:"+koodistodata.getKuvaus());
-//            this.suunnittelualue.add(koodistodata.getKuvaus());
-//        }   
-//        model.addAttribute("suunnittelualue", suunnittelualue);
+        for (Koodisto koodistodata : koodistoRepository.findAll()) {
+            System.out.println("k:"+koodistodata.getKuvaus());
+            this.suunnittelualue.add(koodistodata.getKuvaus());
+        }   
+        model.addAttribute("suunnittelualue", suunnittelualue);
         model.addAttribute("testi", testi);
 
         return "index";

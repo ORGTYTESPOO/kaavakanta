@@ -54,8 +54,7 @@ public class Koodisto implements Serializable {
             
     
 
-    public Koodisto(int id, int koodi, String ryhma, String kuvaus, String lisainfo) {
-        this.id = id;
+    public Koodisto(int koodi, String ryhma, String kuvaus, String lisainfo) {
         this.koodi = koodi;
         this.ryhma = ryhma;
         this.kuvaus = kuvaus;
