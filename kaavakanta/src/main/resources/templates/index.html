@@ -6,28 +6,25 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css"/>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-        </head>
-        
-        <!-- responsiivinen bootstrap-->
-        <body class="container">
 
+    </head>
+
+    <!-- responsiivinen bootstrap-->
+    <body class="container">
         <form th:action="@{/}" method="POST">
             <!-- valintalista 1 -->
-                <select name="var1">
-                    <p th:each="index : ${controllerin_lahettama_lista_attribuutti}">
-                        <option th:text="${index}"> th:text="${index}" </option>
-                    </p>
-                </select>
-            
-            <!-- valintalista 2 -->
-                <select name="var2">
-                    <p th:each="index : ${controllerin_lahettama_lista_attribuutti}">
-                        <option th:text="${index}"> th:text="${index}" </option>
-                    </p>
-                </select>
-            <button type="submit">Lähetä kaavarekisteriin</button>
+            <select name="var1">
+                <p th:each="index : ${suunnittelualue}">
+                    <option th:text="${index}"> th:text="${index}" </option>
+                </p>
+            </select>
 
+            <!-- valintalista 1 -->
+
+
+            <button type="submit">Laheta kaavarekisteriin</button>
         </form>
+    </body>
+</html>     
 
-        </body>
+
