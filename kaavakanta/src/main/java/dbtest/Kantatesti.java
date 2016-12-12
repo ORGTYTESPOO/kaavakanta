@@ -20,9 +20,9 @@ public class Kantatesti {
     public static void main(String[] args) throws Exception {
  
         Class.forName("org.postgresql.Driver");
-        String jdbcUrl = "jdbc:postgresql://172.17.52.88:5432/ksk";
-        String username = "kskuser";
-        String password = "ksk";
+        String jdbcUrl = "********";
+        String username = "******";
+        String password = "*****";
  
         Connection connection = null;
         try {
