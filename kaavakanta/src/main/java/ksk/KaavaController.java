@@ -10,39 +10,44 @@ package ksk;
  * @author saara
  */
 import java.util.ArrayList;
-import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class KaavaController {
- 
-    private Date sysdate;
+
+//    private Date sysdate;
+    ArrayList<String> suunnittelualue = new ArrayList<>();
     
     @Autowired
-    KoodistoRepository koodistorepository;
-    @Autowired
-    KaavatilastoRepository kaavatilastorepository;
-    
+    KoodistoRepository koodistoRepository;
     
     @RequestMapping("/")
     public String home(Model model) {
-    return "index";    
-    }
-    
-        @RequestMapping(value = "/", method = RequestMethod.POST)
-    public String save(@RequestParam String var1) {
+        
+        suunnittelualue.clear();
+        String testi = "hei maailma";
+        //suunnittelualue
 
-//        if (!var1.trim().isEmpty()) {
-//            sysdate = new Date();
-//            kaavatilastorepository.save(new Kaavatilasto(sysdate, var1));
-//        }
-        return "redirect:/";
+//        for (Koodisto koodistodata : koodistoRepository.findAll()) {
+//            System.out.println("k:"+koodistodata.getKuvaus());
+//            this.suunnittelualue.add(koodistodata.getKuvaus());
+//        }   
+//        model.addAttribute("suunnittelualue", suunnittelualue);
+        model.addAttribute("testi", testi);
+
+        return "index";
     }
-    
-    
+
+//    @RequestMapping(value = "/", method = RequestMethod.POST)
+//    public String save(@RequestParam String var1) {
+//
+////        if (!var1.trim().isEmpty()) {
+////            sysdate = new Date();
+////            kaavatilastorepository.save(new Kaavatilasto(sysdate, var1));
+////        }
+//        return "redirect:/";
+//    }
 }
