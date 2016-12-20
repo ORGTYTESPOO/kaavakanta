@@ -1,17 +1,18 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package ksk;
 
 /**
- *
  * @author saara
  */
-
+import java.util.ArrayList;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
- 
-public interface KoodistoRepository  extends CrudRepository<Koodisto, Long> {
-    
+
+public interface KoodistoRepository extends CrudRepository<Koodisto, Long> {
+
+    @Query("SELECT k FROM Koodisto k WHERE k.ryhmakoodi = 1")
+    ArrayList<Koodisto> suunnitteluAlue();
+
+    @Query("SELECT k FROM Koodisto k WHERE k.ryhmakoodi = 2")
+    ArrayList<Koodisto> kaavaTyyppi();
 }

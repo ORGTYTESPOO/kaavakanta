@@ -20,6 +20,7 @@ public class KaavaController {
 
 //    private Date sysdate;
     ArrayList<String> suunnittelualue = new ArrayList<>();
+    ArrayList<String> kaavatyyppi = new ArrayList<>();
     
     @Autowired
     KoodistoRepository koodistoRepository;
@@ -31,12 +32,30 @@ public class KaavaController {
         String testi = "hei maailma";
         //suunnittelualue
 
-        for (Koodisto koodistodata : koodistoRepository.findAll()) {
-            System.out.println("k:"+koodistodata.getKuvaus());
+//        for (Koodisto koodistodata : koodistoRepository.findAll()) {
+//            System.out.println("k:"+koodistodata.getKuvaus()+koodistodata.getRyhmakoodi());
+//            this.suunnittelualue.add(koodistodata.getKuvaus());
+//        }   
+//      
+
+
+        for (Koodisto koodistodata : koodistoRepository.suunnitteluAlue()) {
+            System.out.println("k:"+koodistodata.getKuvaus()+koodistodata.getRyhmakoodi());
             this.suunnittelualue.add(koodistodata.getKuvaus());
         }   
+        
+        
+        for (Koodisto koodistodata : koodistoRepository.kaavaTyyppi()) {
+            System.out.println("k:"+koodistodata.getKuvaus()+koodistodata.getRyhmakoodi());
+            this.kaavatyyppi.add(koodistodata.getKuvaus());
+        }  
+   
+       
+
+        
         model.addAttribute("suunnittelualue", suunnittelualue);
-        model.addAttribute("testi", testi);
+        
+        model.addAttribute("kaavatyyppi", kaavatyyppi);
 
         return "index";
     }

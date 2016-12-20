@@ -12,18 +12,27 @@ import javax.persistence.Table;
  *
  * @author saara
  */
+//  id numeric NOT NULL,
+//  koodi numeric NOT NULL,
+//  ryhmakoodi numeric NOT NULL,
+//  ryhma character varying(20),
+//  kuvaus character varying(30),
+//  lisainfo character varying(50)
 @Entity
 @Table(name = "koodisto")
 public class Koodisto implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
- 
+
     @Column(name = "id")
     private int id;
 
     @Column(name = "koodi")
     private int koodi;
+
+    @Column(name = "ryhmakoodi")
+    private int ryhmakoodi;
 
     @Column(name = "ryhma")
     private String ryhma;
@@ -38,8 +47,6 @@ public class Koodisto implements Serializable {
 
     }
 
-   
-
 //     INSERT INTO KOODISTO(id,koodi,ryhma, kuvaus,lisainfo) VALUES(1,1,'suunnittelualue','Leppävaara','Leppävaaran suunnittelualue');
 //INSERT INTO KOODISTO(id,koodi,ryhma, kuvaus,lisainfo) VALUES(2,2,'suunnittelualue','Tapiola','Tapiolan suunnittelualue');
 //
@@ -51,9 +58,6 @@ public class Koodisto implements Serializable {
 //
 //     
 // 
-            
-    
-
     public Koodisto(int koodi, String ryhma, String kuvaus, String lisainfo) {
         this.koodi = koodi;
         this.ryhma = ryhma;
@@ -75,6 +79,14 @@ public class Koodisto implements Serializable {
 
     public void setKoodi(int koodi) {
         this.koodi = koodi;
+    }
+
+    public int getRyhmakoodi() {
+        return ryhmakoodi;
+    }
+
+    public void setRyhmakoodi(int ryhmakoodi) {
+        this.ryhmakoodi = ryhmakoodi;
     }
 
     public String getRyhma() {
@@ -100,6 +112,5 @@ public class Koodisto implements Serializable {
     public void setLisainfo(String lisainfo) {
         this.lisainfo = lisainfo;
     }
-    
-    
+
 }
