@@ -38,6 +38,7 @@ import javax.persistence.TemporalType;
 public class Historia implements Serializable{
 
     
+    
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
 
@@ -62,10 +63,25 @@ public class Historia implements Serializable{
     @Column(name = "suunnittelualue")
     private String suunnittelualue;
 
-        // timestamp muutokselle
+    // timestamp muutokselle
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "date")
+    @Column(name = "aikaleima")
     private Date aikaleima;
+
+    public Historia() {
+    }
+
+    
+    public Historia(int id, String kaavatunnus, String kaavanimi, String lisatieto, String hankkeenkuvaus, String kaavatyyppi, String suunnittelualue, Date aikaleima) {
+        this.id = id;
+        this.kaavatunnus = kaavatunnus;
+        this.kaavanimi = kaavanimi;
+        this.lisatieto = lisatieto;
+        this.hankkeenkuvaus = hankkeenkuvaus;
+        this.kaavatyyppi = kaavatyyppi;
+        this.suunnittelualue = suunnittelualue;
+        this.aikaleima = aikaleima;
+    }
 
     public int getId() {
         return id;

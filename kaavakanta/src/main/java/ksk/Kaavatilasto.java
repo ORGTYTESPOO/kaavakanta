@@ -43,7 +43,7 @@ public class Kaavatilasto implements Serializable {
     private String kaavatyyppi;
 
     @Column(name = "suunnittelualue")
-    private int suunnittelualue;
+    private String suunnittelualue;
 
 //    // timestamp muutokselle
 //    @Temporal(TemporalType.TIMESTAMP)
@@ -98,13 +98,15 @@ public class Kaavatilasto implements Serializable {
         this.kaavatyyppi = kaavatyyppi;
     }
 
-    public int getSuunnittelualue() {
+    public String getSuunnittelualue() {
         return suunnittelualue;
     }
 
-    public void setSuunnittelualue(int suunnittelualue) {
+    public void setSuunnittelualue(String suunnittelualue) {
         this.suunnittelualue = suunnittelualue;
     }
+
+    
 
  
    

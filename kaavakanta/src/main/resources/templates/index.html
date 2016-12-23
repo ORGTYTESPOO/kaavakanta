@@ -14,7 +14,7 @@
         <!-- hakukenttä -->
         Kaavatunnushaku (kantaan syötetty testimielessä tietoa kaavatunnuksilla 049110201,049110210 ja 049110515)
         <form th:action="@{/}" method="POST">
-            <textarea name="haku" rows="1" cols="40">
+            <textarea name="hae" rows="1" cols="40">
              
             </textarea>
             <button type="submit">Etsi</button>
@@ -27,7 +27,7 @@
         String kaavahankkeenkuvaus;
         String kaavakaavatyyppi;
         int kaavasuunnittelualue;-->
-        <h2>Kaavan tiedot</h2>
+        <h2>Haetun kaavan tiedot</h2>
         <table class="table table-striped">
             <tr>
                 <td>Kaavatunnus</td>
@@ -48,20 +48,20 @@
         </table>
 
 
-        <h3>Muuta kaavan tietoja</h3>
+        <h3 th:text="${muutatietoja}"></h3>
         <!-- responsiivinen bootstrap-->
 
-        <form th:action="@{/}" method="POST">
+        <form th:action="@{/haku}" method="POST">
             Kaavatyyppivalinta
             <!-- valintalista 1 -->
-            <select name="var2">
+            <select name="kaavatyyppi">
                 <p th:each="index : ${kaavatyyppi}">
                     <option th:text="${index}"> th:text="${index}" </option>
                 </p>
             </select>
             <!-- valintalista 1 -->
             Suunnittelualuevalinta
-            <select name="var1">
+            <select name="suunnittelualue">
                 <p th:each="index : ${suunnittelualue}">
                     <option th:text="${index}"> th:text="${index}" </option>
                 </p>
@@ -71,6 +71,31 @@
 
             <button type="submit">Laheta kaavarekisteriin</button>
         </form>
+
+        <h2>Muutoshistoria</h2>
+
+        <table class="table table-striped">
+            <tr>
+                <td>Kaavatunnus</td>
+                <td>Kaavanimi</td>
+                <td>Lisätieto</td>
+                <td>Hankkeen kuvaus</td>
+                <td>Kaavatyyppi</td>
+                <td>Suunnittelualue</td>
+                <td>Aikaleima</td>
+            </tr>
+            <tr th:each="index : ${historia}">
+                <td th:text="${index.kaavatunnus}"></td>
+                <td th:text="${index.kaavanimi}"></td>
+                <td th:text="${index.lisatieto}"></td>
+                <td th:text="${index.hankkeenkuvaus}"></td>
+                <td th:text="${index.kaavatyyppi}"></td>
+                <td th:text="${index.suunnittelualue}"></td>
+                <td th:text="${index.aikaleima}"></td>
+            </tr>
+        </table>
+
+
     </body>
 </html>     
 

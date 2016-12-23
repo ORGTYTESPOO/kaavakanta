@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ksk;
 
 /**
@@ -10,6 +5,7 @@ package ksk;
  * @author saara
  */
 import java.util.ArrayList;
+import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +19,7 @@ public class KaavaController {
 //    private Date sysdate;
     ArrayList<String> suunnittelualue = new ArrayList<>();
     ArrayList<String> kaavatyyppi = new ArrayList<>();
+    ArrayList<Historia> historia = new ArrayList<>();
     boolean empty = true;
     Kaavatilasto kaavatilasto;
     String kaavakaavatunnus;
@@ -31,6 +28,7 @@ public class KaavaController {
     String kaavahankkeenkuvaus;
     String kaavakaavatyyppi;
     String kaavasuunnittelualue;
+    String muutatietoja;
 
     @Autowired
     KoodistoRepository koodistoRepository;
@@ -38,18 +36,22 @@ public class KaavaController {
     @Autowired
     KaavatilastoRepository kaavatilastoRepository;
 
+    @Autowired
+    HistoriaRepository historiaRepository;
+
     @RequestMapping("/")
     public String home(Model model) {
 
         luoAlasvetoValikot();
 
-        if (empty == false) {
+        if (this.empty == false) {
             kaavakaavatunnus = kaavatilasto.getKaavatunnus();
             kaavakaavanimi = kaavatilasto.getKaavanimi();
             kaavalisatieto = kaavatilasto.getLisatieto();
             kaavahankkeenkuvaus = kaavatilasto.getHankkeenkuvaus();
             kaavakaavatyyppi = kaavatilasto.getKaavatyyppi();
-            kaavasuunnittelualue = Integer.toString(kaavatilasto.getSuunnittelualue());
+            kaavasuunnittelualue = kaavatilasto.getSuunnittelualue();
+            muutatietoja = "Muuta kaavan tietoja";
 
         } else {
             kaavakaavatunnus = "";
@@ -58,8 +60,10 @@ public class KaavaController {
             kaavahankkeenkuvaus = "";
             kaavakaavatyyppi = "";
             kaavasuunnittelualue = "";
+            muutatietoja = "";
         }
 
+        model.addAttribute("muutatietoja", muutatietoja);
         model.addAttribute("kaavakaavatunnus", kaavakaavatunnus);
         model.addAttribute("kaavakaavanimi", kaavakaavanimi);
         model.addAttribute("kaavalisatieto", kaavalisatieto);
@@ -68,24 +72,57 @@ public class KaavaController {
         model.addAttribute("kaavasuunnittelualue", kaavasuunnittelualue);
         model.addAttribute("suunnittelualue", suunnittelualue);
         model.addAttribute("kaavatyyppi", kaavatyyppi);
+        model.addAttribute("historia", historiaRepository.findAll());
 
         return "index";
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public String save(@RequestParam String haku) {
-        empty = true;
-        if (!haku.trim().isEmpty()) {
-            this.kaavatilasto = kaavatilastoRepository.findByKaavatunnus(haku.trim());
-            System.out.println("kaavatilasto on "+kaavatilasto);
-            if(this.kaavatilasto != null){
-               empty = false; 
-            }
-            
-        }
+    public String hakukentta(@RequestParam String hae) {
+
+        haku(hae);
+
         return "redirect:/";
     }
 
+    @RequestMapping(value = "/haku", method = RequestMethod.POST)
+    public String save(@RequestParam String kaavatyyppi, @RequestParam String suunnittelualue) {
+
+        if (kaavatilasto != null) {
+            //hae vanha objekti kaavakaavatunnuksella
+            Kaavatilasto vanha = kaavatilastoRepository.findByKaavatunnus(kaavakaavatunnus);
+
+//luo historiaentiteetti vanhasta objektista ja sysdatesta        
+            Date sysdate = new Date();
+            Historia hvanha = new Historia(vanha.getId(), vanha.getKaavatunnus(), vanha.getKaavanimi(), vanha.getLisatieto(), vanha.getHankkeenkuvaus(), vanha.getKaavatyyppi(), vanha.getSuunnittelualue(), sysdate);
+//luo uusi entiteetti vanhasta ja aseta sille uudet arvot        
+            Kaavatilasto uusi = vanha;
+            uusi.setKaavatyyppi(kaavatyyppi);
+            uusi.setSuunnittelualue(suunnittelualue);
+
+            historiaRepository.save(hvanha);
+
+            kaavatilastoRepository.save(uusi);
+
+            haku(this.kaavatilasto.getKaavatunnus());
+
+            //save it to history
+            //create new entity, copy old entity info
+            //set new kaavatyyppi and suunnittelualue
+            //save it to kaavatilasto
+//        formdatarepository.save(new Formdata(sysdate, book));
+//        if (!kaavatyyppi.trim().isEmpty()) {
+//            kaavatilastoRepository.updateKaavatyyppi(kaavakaavatunnus, kaavatyyppi);
+//        }
+//        if (!suunnittelualue.trim().isEmpty()) {
+//            kaavatilastoRepository.updateSuunnittelualue(kaavakaavatunnus, suunnittelualue);
+//        }
+        }
+
+        return "redirect:/";
+    }
+
+    //, @RequestParam String kaavatyyppi, @RequestParam String suunnittelualue
 //    @RequestMapping(value = "/", method = RequestMethod.POST)
 //    public String save(@RequestParam String var1) {
 //
@@ -95,31 +132,41 @@ public class KaavaController {
 ////        }
 //        return "redirect:/";
 //    }
-    
+    private void haku(String haku) {
+
+        this.empty = true;
+        if (!haku.trim().isEmpty()) {
+            this.kaavatilasto = kaavatilastoRepository.findByKaavatunnus(haku.trim());
+            //tarkistetaan myös ilman 049 alkua
+            if (this.kaavatilasto == null) {
+                this.kaavatilasto = kaavatilastoRepository.findByKaavatunnus("049" + haku.trim());
+            }
+            if (this.kaavatilasto != null) {
+                this.empty = false;
+            }
+        }
+    }
+
     private void luoAlasvetoValikot() {
 
         suunnittelualue.clear();
         kaavatyyppi.clear();
+        historia.clear();
         //suunnittelualue
 
         for (Koodisto koodistodata : koodistoRepository.findAll()) {
             System.out.println("k:" + koodistodata.getKuvaus() + koodistodata.getRyhmakoodi());
             if (koodistodata.getRyhmakoodi() == 1) {
-                this.suunnittelualue.add(koodistodata.getKuvaus());
+                this.suunnittelualue.add(koodistodata.getKoodi() + ":" + koodistodata.getKuvaus());
             } else {
                 this.kaavatyyppi.add(koodistodata.getKuvaus());
             }
         }
+//        
+//        for(Historia h : historiaRepository.findAll()){
+//            this.historia.add(muutatietoja);
+//        }
 
-//        for (Koodisto koodistodata : koodistoRepository.suunnitteluAlue()) {
-//            System.out.println("k:" + koodistodata.getKuvaus() + koodistodata.getRyhmakoodi());
-//            this.suunnittelualue.add(koodistodata.getKuvaus());
-//        }
-//
-//        for (Koodisto koodistodata : koodistoRepository.kaavaTyyppi()) {
-//            System.out.println("k:" + koodistodata.getKuvaus() + koodistodata.getRyhmakoodi());
-//            this.kaavatyyppi.add(koodistodata.getKuvaus());
-//        }
     }
 
 }

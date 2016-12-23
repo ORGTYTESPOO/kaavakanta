@@ -15,4 +15,6 @@ public interface KoodistoRepository extends CrudRepository<Koodisto, Long> {
 
     @Query("SELECT k FROM Koodisto k WHERE k.ryhmakoodi = 2")
     ArrayList<Koodisto> kaavaTyyppi();
+    
+    
 }
