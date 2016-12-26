@@ -5,50 +5,33 @@
  */
 package ksk;
 
-import java.io.Serializable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 /**
  *
  * @author saara
  */
-@Entity
-@Table(name = "kaavatilasto")
-public class Kaavatilasto implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-
-    @Column(name = "id")
+public class Kaavatilasto{
+    
     private int id;
-
-    @Column(name = "kaavatunnus")
     private String kaavatunnus;
-
-    @Column(name = "kaavanimi")
     private String kaavanimi;
-
-    @Column(name = "lisatieto")
     private String lisatieto;
-
-    @Column(name = "hankkeenkuvaus")
     private String hankkeenkuvaus;
-
-    @Column(name = "kaavatyyppi")
     private String kaavatyyppi;
-
-    @Column(name = "suunnittelualue")
     private String suunnittelualue;
 
-//    // timestamp muutokselle
-//    @Temporal(TemporalType.TIMESTAMP)
-//    @Column(name = "date")
-//    private Date date;
+    public Kaavatilasto(int id, String kaavatunnus, String kaavanimi, String lisatieto, String hankkeenkuvaus, String kaavatyyppi, String suunnittelualue) {
+        this.id = id;
+        this.kaavatunnus = kaavatunnus;
+        this.kaavanimi = kaavanimi;
+        this.lisatieto = lisatieto;
+        this.hankkeenkuvaus = hankkeenkuvaus;
+        this.kaavatyyppi = kaavatyyppi;
+        this.suunnittelualue = suunnittelualue;
+    }
+
+    public Kaavatilasto() {
+    }
 
     public int getId() {
         return id;
@@ -105,9 +88,7 @@ public class Kaavatilasto implements Serializable {
     public void setSuunnittelualue(String suunnittelualue) {
         this.suunnittelualue = suunnittelualue;
     }
-
     
-
- 
-   
+    
+    
 }

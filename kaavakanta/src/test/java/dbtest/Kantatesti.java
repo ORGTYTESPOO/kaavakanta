@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package dbtest;
 
 import java.sql.Connection;
@@ -18,13 +14,15 @@ import java.sql.Statement;
 public class Kantatesti {
  
     public static void main(String[] args) throws Exception {
+        
+    String driver = "org.postgresql.Driver";
+    String jdbcUrl = "jdbc:postgresql://localhost:5432/test1";
+    String username = "saara";
+    String password = "postgres";
  
-        Class.forName("org.postgresql.Driver");
-        String jdbcUrl = "********";
-        String username = "******";
-        String password = "*****";
- 
+        Class.forName(driver);
         Connection connection = null;
+        
         try {
             System.out.println("Connecting database...");
             connection = DriverManager.getConnection(jdbcUrl, username, password);
@@ -54,7 +52,7 @@ public class Kantatesti {
  
         while (resultSet.next()) {
             int id = resultSet.getInt("id");
-            String nimi = resultSet.getString("kuvaus");
+            String nimi = resultSet.getString("ryhma");
  
             query = query + id + "\t" + nimi + "\n";
         }

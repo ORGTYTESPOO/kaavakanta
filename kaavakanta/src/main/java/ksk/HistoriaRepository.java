@@ -5,12 +5,30 @@
  */
 package ksk;
 
+import DB.Tietokanta;
+import java.util.ArrayList;
+import java.util.Date;
+
 /**
  *
  * @author saara
  */
-import org.springframework.data.repository.CrudRepository;
- 
-public interface HistoriaRepository  extends CrudRepository<Historia, Long> {
+public class HistoriaRepository {
+     private ArrayList<Historia> all = new ArrayList();
+
+    public ArrayList<Historia> findAll(Tietokanta t) {
+        t.queryHistoria1("");
+        return all;
+    }
+;
+    
+    public void insert(Tietokanta t, Historia h){
+        //lisätään aina uusi rivi
+        String query = "insert into historia(id,kaavatunnus,kaavanimi,lisatieto,hankkeenkuvaus,kaavatyyppi,suunnittelualue,aikaleima) values(";
+        String values =  h.getId() +","+ h.getKaavatunnus()+","+h.getKaavanimi()+","+h.getLisatieto()+","+h.getHankkeenkuvaus()+","+h.getKaavatyyppi()+","+h.getSuunnittelualue()+","+h.getAikaleima()+")";
+        t.executeDB(query + values);
+             
+    }
+    
     
 }

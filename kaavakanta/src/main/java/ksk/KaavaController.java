@@ -4,9 +4,11 @@ package ksk;
  *
  * @author saara
  */
+
+
+import DB.Tietokanta;
 import java.util.ArrayList;
 import java.util.Date;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,9 +19,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class KaavaController {
 
 //    private Date sysdate;
+    private String driver = "org.postgresql.Driver";
+    private String jdbcUrl = "jdbc:postgresql://localhost:5432/test1";
+    private String username = "saara";
+    private String password = "postgres";
+//    Tietokanta t = new Tietokanta("org.postgresql.Driver", "jdbc:postgresql://SV-H-T-TIHA-1.espoo.ad.city:5432/ksk", "", "");    
+    Tietokanta t = new Tietokanta(driver,jdbcUrl,username,password);
     ArrayList<String> suunnittelualue = new ArrayList<>();
     ArrayList<String> kaavatyyppi = new ArrayList<>();
-    ArrayList<Historia> historia = new ArrayList<>();
+//    ArrayList<Historia> historia = new ArrayList<>();
     boolean empty = true;
     Kaavatilasto kaavatilasto;
     String kaavakaavatunnus;
@@ -30,14 +38,17 @@ public class KaavaController {
     String kaavasuunnittelualue;
     String muutatietoja;
 
-    @Autowired
-    KoodistoRepository koodistoRepository;
-
-    @Autowired
-    KaavatilastoRepository kaavatilastoRepository;
-
-    @Autowired
-    HistoriaRepository historiaRepository;
+////    Jos käytettäisiin JPA:ta, mutta connection pool forked -ympäristössä ongelma
+//    @Autowired
+//    KoodistoRepository koodistoRepositoryJPA;
+//
+//    @Autowired
+//    KaavatilastoRepository kaavatilastoRepositoryJPA;
+//
+//    @Autowired
+//    HistoriaRepository historiaRepositoryJPA;
+    
+    KoodistoRepository koodistoRepository = new KoodistoRepository();
 
     @RequestMapping("/")
     public String home(Model model) {
@@ -72,7 +83,7 @@ public class KaavaController {
         model.addAttribute("kaavasuunnittelualue", kaavasuunnittelualue);
         model.addAttribute("suunnittelualue", suunnittelualue);
         model.addAttribute("kaavatyyppi", kaavatyyppi);
-        model.addAttribute("historia", historiaRepository.findAll());
+//        model.addAttribute("historia", historiaRepository.findAll());
 
         return "index";
     }
@@ -80,7 +91,7 @@ public class KaavaController {
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public String hakukentta(@RequestParam String hae) {
 
-        haku(hae);
+//        haku(hae);
 
         return "redirect:/";
     }
@@ -90,21 +101,21 @@ public class KaavaController {
 
         if (kaavatilasto != null) {
             //hae vanha objekti kaavakaavatunnuksella
-            Kaavatilasto vanha = kaavatilastoRepository.findByKaavatunnus(kaavakaavatunnus);
+//            Kaavatilasto vanha = kaavatilastoRepository.findByKaavatunnus(kaavakaavatunnus);
 
 //luo historiaentiteetti vanhasta objektista ja sysdatesta        
             Date sysdate = new Date();
-            Historia hvanha = new Historia(vanha.getId(), vanha.getKaavatunnus(), vanha.getKaavanimi(), vanha.getLisatieto(), vanha.getHankkeenkuvaus(), vanha.getKaavatyyppi(), vanha.getSuunnittelualue(), sysdate);
+//            Historia hvanha = new Historia(vanha.getId(), vanha.getKaavatunnus(), vanha.getKaavanimi(), vanha.getLisatieto(), vanha.getHankkeenkuvaus(), vanha.getKaavatyyppi(), vanha.getSuunnittelualue(), sysdate);
 //luo uusi entiteetti vanhasta ja aseta sille uudet arvot        
-            Kaavatilasto uusi = vanha;
-            uusi.setKaavatyyppi(kaavatyyppi);
-            uusi.setSuunnittelualue(suunnittelualue);
+//            Kaavatilasto uusi = vanha;
+//            uusi.setKaavatyyppi(kaavatyyppi);
+//            uusi.setSuunnittelualue(suunnittelualue);
 
-            historiaRepository.save(hvanha);
+//            historiaRepository.insert(hvanha);
 
-            kaavatilastoRepository.save(uusi);
+//            kaavatilastoRepository.save(uusi);
 
-            haku(this.kaavatilasto.getKaavatunnus());
+//            haku(this.kaavatilasto.getKaavatunnus());
 
             //save it to history
             //create new entity, copy old entity info
@@ -132,29 +143,38 @@ public class KaavaController {
 ////        }
 //        return "redirect:/";
 //    }
-    private void haku(String haku) {
-
-        this.empty = true;
-        if (!haku.trim().isEmpty()) {
-            this.kaavatilasto = kaavatilastoRepository.findByKaavatunnus(haku.trim());
-            //tarkistetaan myös ilman 049 alkua
-            if (this.kaavatilasto == null) {
-                this.kaavatilasto = kaavatilastoRepository.findByKaavatunnus("049" + haku.trim());
-            }
-            if (this.kaavatilasto != null) {
-                this.empty = false;
-            }
-        }
-    }
+    
+    
+    
+    
+//    private void haku(String haku) {
+//
+//        this.empty = true;
+//        if (!haku.trim().isEmpty()) {
+//            this.kaavatilasto = kaavatilastoRepository.findByKaavatunnus(haku.trim());
+//            //tarkistetaan myös ilman 049 alkua
+//            if (this.kaavatilasto == null) {
+//                this.kaavatilasto = kaavatilastoRepository.findByKaavatunnus("049" + haku.trim());
+//            }
+//            if (this.kaavatilasto != null) {
+//                this.empty = false;
+//            }
+//        }
+//    }
 
     private void luoAlasvetoValikot() {
 
         suunnittelualue.clear();
         kaavatyyppi.clear();
-        historia.clear();
+//        historia.clear();
         //suunnittelualue
 
-        for (Koodisto koodistodata : koodistoRepository.findAll()) {
+        ArrayList<Koodisto> testi = koodistoRepository.findAll(this.t);
+                for(Koodisto ko : testi){
+                    System.out.println("ko:"+ko.getKuvaus());
+                }
+                
+        for (Koodisto koodistodata : koodistoRepository.findAll(this.t)) {
             System.out.println("k:" + koodistodata.getKuvaus() + koodistodata.getRyhmakoodi());
             if (koodistodata.getRyhmakoodi() == 1) {
                 this.suunnittelualue.add(koodistodata.getKoodi() + ":" + koodistodata.getKuvaus());
