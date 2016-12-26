@@ -22,6 +22,7 @@ public class HistoriaRepository {
     }
 ;
     
+    
     public void insert(Tietokanta t, Historia h){
         //lisätään aina uusi rivi
         String query = "insert into historia(id,kaavatunnus,kaavanimi,lisatieto,hankkeenkuvaus,kaavatyyppi,suunnittelualue,aikaleima) values(";

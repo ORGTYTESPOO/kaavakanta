@@ -18,6 +18,12 @@ public class KaavatilastoRepository {
 
     ;
     
+    public Kaavatilasto findByKaavatunnus(Tietokanta t, String kaavatunnus) {
+        resultSet = t.queryKaavatilasto1("select * from kaavatilasto where kaavatunnus = " + kaavatunnus);
+        return resultSet.get(0);
+    }
+
+    ;
     public void save(Tietokanta t, Kaavatilasto h) {
         //poista vanha jos löytyy
         resultSet = t.queryKaavatilasto1(h.getKaavatunnus());
@@ -25,7 +31,7 @@ public class KaavatilastoRepository {
         if (!resultSet.isEmpty()) {
             t.executeDB("delete from kaavatilasto where id =" + h.getKaavatunnus());
         }
-        
+
         // tallenna uusi rivi tauluun
         String query = "insert into kaavatilasto(id,kaavatunnus,kaavanimi,lisatieto,hankkeenkuvaus,kaavatyyppi,suunnittelualue) values(";
         String values = h.getId() + "," + h.getKaavatunnus() + "," + h.getKaavanimi() + "," + h.getLisatieto() + "," + h.getHankkeenkuvaus() + "," + h.getKaavatyyppi() + "," + h.getSuunnittelualue() + ")";

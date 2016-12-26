@@ -35,22 +35,30 @@ public class Tietokanta {
         this.username = username;
     }
 
-    public ArrayList<Kaavatilasto> queryKaavatilasto1(String ehdot) {
-        query("kaavatilasto",ehdot);
+    public ArrayList<Kaavatilasto> queryKaavatilasto1(String ehtoquery) {
+        query("kaavatilasto", ehtoquery);
         return this.kaavatilastoQuery;
     }
 
-    public ArrayList<Historia> queryHistoria1(String ehdot) {
-        query("historia",ehdot);
+    public ArrayList<Historia> queryHistoria1(String ehtoquery) {
+        query("historia", ehtoquery);
         return this.historiaQuery;
-         }
+    }
 
-    public ArrayList<Koodisto> queryKoodisto1(String ehdot) {
-        query("koodisto",ehdot);
+    public ArrayList<Koodisto> queryKoodisto1(String ehtoquery) {
+        query("koodisto", ehtoquery);
         return this.koodistoQuery;
     }
 
-    public void query(String taulu, String ehdot) {
+    /**
+     *
+     * @param taulu
+     * @param ehtoquery
+     *
+     * query(taulu, "") hakee kaiken taulusta query(taulu, "select * from taulu
+     * where x order by 1")
+     */
+    public void query(String taulu, String ehtoquery) {
 
         try {
             Class.forName(driver);
@@ -66,11 +74,24 @@ public class Tietokanta {
 
 //---------------------------------------------------------------------------------
             if (taulu.equals("koodisto")) {
-                this.koodistoQuery = queryKoodisto(connection, "select * from koodisto");
+                if (ehtoquery.isEmpty()) {
+                    this.koodistoQuery = queryKoodisto(connection, "select * from koodisto");
+                } else {
+                    this.koodistoQuery = queryKoodisto(connection, ehtoquery);
+                }
+
             } else if (taulu.equals("historia")) {
-                this.historiaQuery = queryHistoria(connection, "select * from historia");
+                if (ehtoquery.isEmpty()) {
+                    this.historiaQuery = queryHistoria(connection, "select * from historia order by aikaleima");
+                } else {
+                    this.historiaQuery = queryHistoria(connection, ehtoquery);
+                }
             } else {
-                this.kaavatilastoQuery = queryKaavatilasto(connection, "select * from kaavatilasto");
+                if (ehtoquery.isEmpty()) {
+                    this.kaavatilastoQuery = queryKaavatilasto(connection, "select * from kaavatilasto");
+                } else {
+                    this.kaavatilastoQuery = queryKaavatilasto(connection, ehtoquery);
+                }
             }
 
 //---------------------------------------------------------------------------------
@@ -87,8 +108,6 @@ public class Tietokanta {
         }
 
     }
-
-    
 
     //---------------------------------------------------------------------
     private ArrayList<Koodisto> queryKoodisto(Connection connection, String query) throws SQLException {
@@ -161,9 +180,8 @@ public class Tietokanta {
         }
         return rslist;
     }
-    
+
     //------
-    
     //-------------------------------------------------------------------------
     public void executeDB(String query) {
         try {
@@ -195,7 +213,5 @@ public class Tietokanta {
             }
         }
     }
-
-  
 
 }
