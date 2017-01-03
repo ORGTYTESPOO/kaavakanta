@@ -12,17 +12,12 @@
     <body class="container">
 
         <!-- hakukenttä -->
-        Kaavatunnushaku 
+        Kaavatunnushaku (kantaan syötetty testimielessä tietoa kaavatunnuksilla 049110201,049110210 ja 049110515)
         <form th:action="@{/haku}" method="POST">
-
-            <input list="kaavatunnukset" name="hae"></input>
-                <datalist id="kaavatunnukset">
-                     <p th:each="index : ${hakulista}">
-                    <option th:text="${index}"></option>   
-                     </p>
-                </datalist>
-
-                <button type="submit">Hae kaavatunnuksella</button>
+            <textarea name="hae" rows="1" cols="40">
+             
+            </textarea>
+            <button type="submit">Etsi</button>
         </form>
 
         <!-- Kaavan tiedot -->
@@ -33,7 +28,7 @@
         String kaavakaavatyyppi;
         int kaavasuunnittelualue;-->
         <h2>Haetun kaavan tiedot</h2>
-        <table class="table">
+        <table class="table table-striped">
             <tr>
                 <td>Kaavatunnus</td>
                 <td>Kaavanimi</td>
@@ -50,49 +45,37 @@
                 <td><h5 th:text="${kaavakaavatyyppi}">kaavatyyppi</h5></td>
                 <td><h5 th:text="${kaavasuunnittelualue}">suunnittelualue</h5></td>
             </tr>
-            <form th:action="@{/save}" method="POST"> 
-                <tr  class="active"> 
-                    <td><h5 th:text="${muutatietoja}"></h5></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr class="info"> 
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td> 
-                        <select name="kaavatyyppi">
-                           <p th:each="index : ${kaavatyyppi}">
-                                <option th:text="${index}"> th:text="${index}" </option>
-                            </p>
-                        </select>
-                    </td>
-                    <td>
-                        <select name="suunnittelualue">
-                            <p th:each="index : ${suunnittelualue}">
-                                <option th:text="${index}"> th:text="${index}" </option>
-                            </p>
-                        </select>
-                    </td>
-                </tr>
-                <tr> 
-                    <td><button type="submit">Laheta kaavarekisteriin</button></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            </form>
-
+            
+            <tr>
+                <td></td>
+            </tr>
+            
         </table>
 
 
+        <h3 th:text="${muutatietoja}"></h3>
+        <!-- responsiivinen bootstrap-->
 
+        <form th:action="@{/save}" method="POST">
+            Kaavatyyppi
+            <!-- valintalista 1 -->
+            <select name="kaavatyyppi">
+                <p th:each="index : ${kaavatyyppi}">
+                    <option th:text="${index}"> th:text="${index}" </option>
+                </p>
+            </select>
+            <!-- valintalista 1 -->
+            Suunnittelualue
+            <select name="suunnittelualue">
+                <p th:each="index : ${suunnittelualue}">
+                    <option th:text="${index}"> th:text="${index}" </option>
+                </p>
+            </select>
+
+
+
+            <button type="submit">Laheta kaavarekisteriin</button>
+        </form>
 
         <h2>Muutoshistoria</h2>
 

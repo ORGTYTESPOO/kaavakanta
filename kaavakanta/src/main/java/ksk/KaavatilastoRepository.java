@@ -1,43 +1,27 @@
 package ksk;
 
-import DB.Tietokanta;
-import java.util.ArrayList;
 
 /**
  *
  * @author saara
  */
-public class KaavatilastoRepository {
 
-    private ArrayList<Kaavatilasto> resultSet = new ArrayList();
 
-    public ArrayList<Kaavatilasto> findAll(Tietokanta t) {
-        resultSet = t.queryKaavatilasto1("");
-        return resultSet;
-    }
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
 
-    ;
+public interface KaavatilastoRepository extends CrudRepository<Kaavatilasto, Long> {
+
+    // haku kaavatunnuksella
+    Kaavatilasto findByKaavatunnus(String kaavatunnus);
     
-    public Kaavatilasto findByKaavatunnus(Tietokanta t, String kaavatunnus) {
-        resultSet = t.queryKaavatilasto1("select * from kaavatilasto where kaavatunnus = " + kaavatunnus);
-        return resultSet.get(0);
-    }
+    public List<Kaavatilasto> findAllByOrderByIdDesc();
 
-    ;
-    public void save(Tietokanta t, Kaavatilasto h) {
-        //poista vanha jos löytyy
-        resultSet = t.queryKaavatilasto1(h.getKaavatunnus());
+    public Kaavatilasto findByKaavatunnusContaining(String string);
 
-        if (!resultSet.isEmpty()) {
-            t.executeDB("delete from kaavatilasto where id =" + h.getKaavatunnus());
-        }
+    public List<Kaavatilasto> findByKaavanimiContaining(String string);
 
-        // tallenna uusi rivi tauluun
-        String query = "insert into kaavatilasto(id,kaavatunnus,kaavanimi,lisatieto,hankkeenkuvaus,kaavatyyppi,suunnittelualue) values(";
-        String values = h.getId() + "," + h.getKaavatunnus() + "," + h.getKaavanimi() + "," + h.getLisatieto() + "," + h.getHankkeenkuvaus() + "," + h.getKaavatyyppi() + "," + h.getSuunnittelualue() + ")";
-
-        t.executeDB(query + values);
-
-    }
-;
 }

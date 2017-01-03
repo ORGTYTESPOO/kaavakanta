@@ -1,5 +1,15 @@
 package ksk;
 
+
+
+import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 /**
  *
  * @author saara
@@ -11,29 +21,29 @@ package ksk;
 //  kuvaus character varying(30),
 //  lisainfo character varying(50)
 
-//@Entity
-//@Table(name = "koodisto")
-public class Koodisto{
+@Entity
+@Table(name = "koodisto")
+public class Koodisto implements Serializable {
 
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
 
-//    @Column(name = "id")
+    @Column(name = "id")
     private int id;
 
-//    @Column(name = "koodi")
+    @Column(name = "koodi")
     private int koodi;
 
-//    @Column(name = "ryhmakoodi")
+    @Column(name = "ryhmakoodi")
     private int ryhmakoodi;
 
-//    @Column(name = "ryhma")
+    @Column(name = "ryhma")
     private String ryhma;
 
-//    @Column(name = "kuvaus")
+    @Column(name = "kuvaus")
     private String kuvaus;
 
-//    @Column(name = "lisainfo")
+    @Column(name = "lisainfo")
     private String lisainfo;
 
     protected Koodisto() {
@@ -48,13 +58,11 @@ public class Koodisto{
 //
 //INSERT INTO KOODISTO(id,koodi,ryhma, kuvaus,lisainfo) VALUES(5,6,'suunnittelualue','Vanha-Espoo','Vanha-Espoon suunnittelualue');
 //INSERT INTO KOODISTO(id,koodi,ryhma, kuvaus,lisainfo) VALUES(6,7,'suunnittelualue','Pohjois-Espoo','Pohjois-Espoon suunnittelualue');
-//
-//     
-// 
-    public Koodisto(int id, int koodi, int ryhmakoodi, String ryhma, String kuvaus, String lisainfo) {
-        this.id = id;
+
+     
+ 
+    public Koodisto(int koodi, String ryhma, String kuvaus, String lisainfo) {
         this.koodi = koodi;
-        this.ryhmakoodi = ryhmakoodi;
         this.ryhma = ryhma;
         this.kuvaus = kuvaus;
         this.lisainfo = lisainfo;
@@ -109,3 +117,4 @@ public class Koodisto{
     }
 
 }
+

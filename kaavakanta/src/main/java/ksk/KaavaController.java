@@ -4,11 +4,9 @@ package ksk;
  *
  * @author saara
  */
-
-
-import DB.Tietokanta;
 import java.util.ArrayList;
 import java.util.Date;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,16 +16,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class KaavaController {
 
-//    private Date sysdate;
-    private String driver = "org.postgresql.Driver";
-    private String jdbcUrl = "jdbc:postgresql://localhost:5432/test1";
-    private String username = "saara";
-    private String password = "postgres";
-//    Tietokanta t = new Tietokanta("org.postgresql.Driver", "jdbc:postgresql://SV-H-T-TIHA-1.espoo.ad.city:5432/ksk", "", "");    
-    Tietokanta t = new Tietokanta(driver,jdbcUrl,username,password);
-    ArrayList<String> suunnittelualue = new ArrayList<>();
-    ArrayList<String> kaavatyyppi = new ArrayList<>();
-//    ArrayList<Historia> historia = new ArrayList<>();
+    ArrayList<String> suunnittelualue = new ArrayList();
+    ArrayList<String> kaavatyyppi = new ArrayList();
+    ArrayList<String> hakulista = new ArrayList();
+
     boolean empty = true;
     Kaavatilasto kaavatilasto;
     String kaavakaavatunnus;
@@ -38,22 +30,21 @@ public class KaavaController {
     String kaavasuunnittelualue;
     String muutatietoja;
 
-////    Jos käytettäisiin JPA:ta, mutta connection pool forked -ympäristössä ongelma
-//    @Autowired
-//    KoodistoRepository koodistoRepositoryJPA;
-//
-//    @Autowired
-//    KaavatilastoRepository kaavatilastoRepositoryJPA;
-//
-//    @Autowired
-//    HistoriaRepository historiaRepositoryJPA;
-    
-    KoodistoRepository koodistoRepository = new KoodistoRepository();
+    @Autowired
+    KoodistoRepository koodistoRepository;
+
+    @Autowired
+    KaavatilastoRepository kaavatilastoRepository;
+
+    @Autowired
+    HistoriaRepository historiaRepository;
 
     @RequestMapping("/")
     public String home(Model model) {
 
-        luoAlasvetoValikot();
+        nollaaValikot();
+        luoHakulista();
+        
 
         if (this.empty == false) {
             kaavakaavatunnus = kaavatilasto.getKaavatunnus();
@@ -63,6 +54,7 @@ public class KaavaController {
             kaavakaavatyyppi = kaavatilasto.getKaavatyyppi();
             kaavasuunnittelualue = kaavatilasto.getSuunnittelualue();
             muutatietoja = "Muuta kaavan tietoja";
+            luoAlasvetoValikot();
 
         } else {
             kaavakaavatunnus = "";
@@ -83,39 +75,42 @@ public class KaavaController {
         model.addAttribute("kaavasuunnittelualue", kaavasuunnittelualue);
         model.addAttribute("suunnittelualue", suunnittelualue);
         model.addAttribute("kaavatyyppi", kaavatyyppi);
-//        model.addAttribute("historia", historiaRepository.findAll());
+        model.addAttribute("historia", historiaRepository.findAllByOrderByIdDesc());
+        model.addAttribute("hakulista", hakulista);
 
         return "index";
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "/haku", method = RequestMethod.POST)
     public String hakukentta(@RequestParam String hae) {
 
-//        haku(hae);
+        haku(hae);
 
         return "redirect:/";
     }
 
-    @RequestMapping(value = "/haku", method = RequestMethod.POST)
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
     public String save(@RequestParam String kaavatyyppi, @RequestParam String suunnittelualue) {
 
         if (kaavatilasto != null) {
             //hae vanha objekti kaavakaavatunnuksella
-//            Kaavatilasto vanha = kaavatilastoRepository.findByKaavatunnus(kaavakaavatunnus);
+            Kaavatilasto vanha = kaavatilastoRepository.findByKaavatunnus(kaavakaavatunnus);
 
 //luo historiaentiteetti vanhasta objektista ja sysdatesta        
             Date sysdate = new Date();
-//            Historia hvanha = new Historia(vanha.getId(), vanha.getKaavatunnus(), vanha.getKaavanimi(), vanha.getLisatieto(), vanha.getHankkeenkuvaus(), vanha.getKaavatyyppi(), vanha.getSuunnittelualue(), sysdate);
+            System.out.println("sysdate:"+sysdate);
+            int hId = (int) historiaRepository.count();
+            Historia hvanha = new Historia(hId + 1, vanha.getKaavatunnus(), vanha.getKaavanimi(), vanha.getLisatieto(), vanha.getHankkeenkuvaus(), vanha.getKaavatyyppi(), vanha.getSuunnittelualue(), sysdate);
+
+            historiaRepository.save(hvanha);
 //luo uusi entiteetti vanhasta ja aseta sille uudet arvot        
-//            Kaavatilasto uusi = vanha;
-//            uusi.setKaavatyyppi(kaavatyyppi);
-//            uusi.setSuunnittelualue(suunnittelualue);
+            Kaavatilasto uusi = vanha;
+            uusi.setKaavatyyppi(kaavatyyppi);
+            uusi.setSuunnittelualue(suunnittelualue);
 
-//            historiaRepository.insert(hvanha);
+            kaavatilastoRepository.save(uusi);
 
-//            kaavatilastoRepository.save(uusi);
-
-//            haku(this.kaavatilasto.getKaavatunnus());
+            haku(this.kaavatilasto.getKaavatunnus());
 
             //save it to history
             //create new entity, copy old entity info
@@ -143,50 +138,65 @@ public class KaavaController {
 ////        }
 //        return "redirect:/";
 //    }
+    private boolean haku(String haku) {
+
+        // jos kaavatietoja ei ole haettu 
+        this.empty = true;
+
+        // kaavatunnuksella tai nimellä
+        if (!haku.trim().isEmpty()) {
+            // split haku
+            int length = haku.split(" ").length;
+
+            String[] hakusanat = haku.split(" ");
+            for (int i = 0; i < length; i++) {
+                if (kaavatilastoRepository.findByKaavatunnus(hakusanat[i].trim()) != null) {
+                    this.kaavatilasto = kaavatilastoRepository.findByKaavatunnus(hakusanat[i].trim());
+                    this.empty = false;
+                    return true;
+                }
+            }
+        }
+
+        // mentiin loppuun eikä löytynyt
+        return false;
+    }
     
-    
-    
-    
-//    private void haku(String haku) {
-//
-//        this.empty = true;
-//        if (!haku.trim().isEmpty()) {
-//            this.kaavatilasto = kaavatilastoRepository.findByKaavatunnus(haku.trim());
-//            //tarkistetaan myös ilman 049 alkua
-//            if (this.kaavatilasto == null) {
-//                this.kaavatilasto = kaavatilastoRepository.findByKaavatunnus("049" + haku.trim());
-//            }
-//            if (this.kaavatilasto != null) {
-//                this.empty = false;
-//            }
-//        }
-//    }
+    private void nollaaValikot(){
+        this.hakulista.clear();
+        this.suunnittelualue.clear();
+        this.kaavatyyppi.clear();
+    }
 
     private void luoAlasvetoValikot() {
 
-        suunnittelualue.clear();
-        kaavatyyppi.clear();
-//        historia.clear();
-        //suunnittelualue
+        
 
-        ArrayList<Koodisto> testi = koodistoRepository.findAll(this.t);
-                for(Koodisto ko : testi){
-                    System.out.println("ko:"+ko.getKuvaus());
-                }
-                
-        for (Koodisto koodistodata : koodistoRepository.findAll(this.t)) {
-            System.out.println("k:" + koodistodata.getKuvaus() + koodistodata.getRyhmakoodi());
+        //suunnittelualue
+//       
+//                for(Koodisto ko : koodistoRepository.findAll()){
+//                    System.out.println("ko:"+ko.getKuvaus());
+//                }
+        for (Koodisto koodistodata : koodistoRepository.findAll()) {
+
             if (koodistodata.getRyhmakoodi() == 1) {
-                this.suunnittelualue.add(koodistodata.getKoodi() + ":" + koodistodata.getKuvaus());
+                this.suunnittelualue.add(koodistodata.getKuvaus());
             } else {
                 this.kaavatyyppi.add(koodistodata.getKuvaus());
             }
         }
-//        
-//        for(Historia h : historiaRepository.findAll()){
-//            this.historia.add(muutatietoja);
-//        }
 
+    }
+
+    private void luoHakulista() {
+        
+        String kaavatunnus;
+        String kaavanimi;
+        for (Kaavatilasto kaavatilastodata : kaavatilastoRepository.findAll()) {
+            kaavatunnus = kaavatilastodata.getKaavatunnus();
+            kaavanimi = kaavatilastodata.getKaavanimi();
+            this.hakulista.add(kaavatunnus + " " + kaavanimi);
+        }
     }
 
 }
